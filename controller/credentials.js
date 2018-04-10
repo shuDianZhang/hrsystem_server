@@ -1,15 +1,99 @@
+const resumeCollection = require('../model/resume').resume;
+const userBaseInfoCollection = require('../model/userBaseInfo').userBaseInfo;
 const qiniu = require('qiniu');
 
 const accessKey = 'LBXMAi37VySKTS6OIu-7_IkSWrha6e9YqMn82ap-';
 const secretKey = 'As0DnXjbRJPqSn9IPk7e_N3w2zqrs76ItRKQXBN5';
 const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
-let options = { scope: 'shudianzhang', expires: 7200 };
 
 
-let getToken = async (ctx) => {
-    let putPolicy = new qiniu.rs.PutPolicy(options);
+// 七牛云上传凭证
+let getToken = async (ctx, option) => {
+    let bucket = ctx.query.bucket,
+        keyToOverwrite = ctx.query.keyToOverwrite;
+    if (keyToOverwrite) {
+        var putPolicy = new qiniu.rs.PutPolicy({ scope: bucket + ':' + keyToOverwrite, expires: 7200 });
+    } else {
+        var putPolicy = new qiniu.rs.PutPolicy({ scope: bucket, expires: 7200 });
+    }
     let uploadToken = putPolicy.uploadToken(mac);
-    console.log(uploadToken);
+    if (uploadToken) {
+        ctx.body = { status: 0, token: uploadToken }
+    } else {
+        ctx.body = { status: 1, token: 'error' }
+    }
 }
 
-module.exports = { getToken }
+// 用户上传头像
+let uploadHeadImage = async (ctx) => {
+    let _id = ctx.session.user;
+    let userResume = await userBaseInfoCollection.update({ _id }, { hasHeadImg: true }, (err, data) => {
+        if (err) {
+            ctx.body = { status: 1, msg: '数据库内部错误!联系开发人员解决!' }
+            return;
+        }
+    });
+    ctx.body = { status: 0, msg: '头像上传成功!' }
+}
+
+
+function handleResumeInfo(field, tag) {
+    if (field) {
+        let arr = field.split(tag);
+        arr.map(function (item, index) {
+            resume[field].push(item);
+        });
+    }
+}
+
+// 应聘者上传简历
+let upresume = async (ctx) => {
+    let resume = ctx.request.body;
+
+    let goodResult = resume.goodResult;
+    let workExperience = resume.workExperience;
+    let projectExperience = resume.projectExperience;
+
+    console.log(goodResult);
+    resume.goodResult = [];
+    resume.workExperience = [];
+    resume.projectExperience = [];
+
+    if (goodResult) {
+        let arr = goodResult.split('#@@&@!(');
+        arr.map(function (item, index) {
+            resume.goodResult.push(item);
+        });
+        resume.goodResult.shift();
+    }
+
+    if (workExperience) {
+        let arr = workExperience.split('#@@&@!(');
+        arr.map(function (item, index) {
+            resume.workExperience.push(JSON.parse(item));
+        });
+    }
+
+    if (projectExperience) {
+        let arr = projectExperience.split('#@@&@!(');
+        arr.map(function (item, index) {
+            resume.projectExperience.push(JSON.parse(item));
+        });
+    }
+
+    let resumeInfo = new resumeCollection(resume);
+    resumeInfo.save()
+        .then((result) => {
+            console.log(result.phone + '已投递简历，简历投递成功!');
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    ctx.body = {
+        status: 0,
+        msg: '简历投递成功'
+    }
+}
+
+// 
+module.exports = { getToken, uploadHeadImage, upresume }

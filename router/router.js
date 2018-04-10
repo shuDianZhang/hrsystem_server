@@ -16,6 +16,12 @@ route.post('/work/afterwork', userModule.identifyLogin, workModule.afterwork);
 
 route.post('/search/ifclockin', searchModule.ifClockIn);
 route.get('/search/clockinrecord', userModule.identifyLogin, searchModule.clockinRecord);
+route.get('/search/getTopMenuInfo', userModule.identifyLogin, searchModule.topMenuInfo);
+route.get('/search/employeeInfo', userModule.identifyLogin, searchModule.employeeInfo);
+route.get('/search/leader', userModule.identifyLogin, searchModule.getLeaderInfo);
 
 route.get('/upload/gettoken', credentialsModule.getToken);
+route.post('/upload/upresume', credentialsModule.upresume);
+
+route.post('/upload/headimage', credentialsModule.uploadHeadImage);
 module.exports = route;
