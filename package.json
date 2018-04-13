@@ -9,6 +9,7 @@
   "author": "shuDianZhang",
   "license": "ISC",
   "dependencies": {
+    "emailjs": "^2.0.0",
     "koa": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
     "koa-cors": "^0.0.16",

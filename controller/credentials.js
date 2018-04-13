@@ -94,6 +94,4 @@ let upresume = async (ctx) => {
         msg: '简历投递成功'
     }
 }
-
-// 
 module.exports = { getToken, uploadHeadImage, upresume }

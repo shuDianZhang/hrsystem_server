@@ -5,6 +5,7 @@ const deptCollection = require('../model/dept').dept;
 const jobCollection = require('../model/position').position;
 const employeeInfoCollection = require('../model/employeeInfo').employeeInfo;
 const userBaseInfoCollection = require('../model/userBaseInfo').userBaseInfo;
+const resumeCollection = require('../model/resume').resume;
 
 // 查找职工考勤记录
 let clockinRecord = async (ctx) => {
@@ -86,4 +87,26 @@ let getLeaderInfo = async (ctx) => {
     }
 }
 
-module.exports = { clockinRecord, ifClockIn, employeeInfo, topMenuInfo, getLeaderInfo }
+// 获取简历列表
+let getResume = async (ctx) => {
+    let resumeList = await resumeCollection.find();
+    let content = [];
+    resumeList.map(function (item, index) {
+        let resumeBase = {};
+        resumeBase.key = index;
+        resumeBase.name = item.name;
+        resumeBase.sex = item.sex;
+        resumeBase.job = item.job;
+        resumeBase.collage = item.collage;
+        resumeBase.profess = item.profess;
+        resumeBase.salary = item.salary;
+        content.push(resumeBase);
+    });
+    ctx.body = {
+        status: 0,
+        content: content
+    }
+}
+
+
+module.exports = { clockinRecord, ifClockIn, employeeInfo, topMenuInfo, getLeaderInfo, getResume }
