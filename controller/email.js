@@ -1,3 +1,5 @@
+const resumeCollection = require('../model/resume').resume;
+
 var email = require('emailjs');
 
 var server = email.server.connect({
@@ -7,15 +9,20 @@ var server = email.server.connect({
   ssl: true
 });
 
-let sendEmail = async (ctx, option) => {
+let sendEmail = async (ctx) => {
+  let name = ctx.request.body.name;
+  let resumeInfo = await resumeCollection.findOne({ name });
+  let emailTo = resumeInfo.email;
   server.send({
-    text: '您好!非常感谢您参加本次面次面试，很遗憾的告诉你，你没有通过简历筛选，无法获得面试机会，被打入人才库!',
+    text: '邀请你面试!',
     from: '506975676@qq.com',
-    to: '2303093270@qq.com',
-    subject: '中国电信21CN面试结果'
-  }, function (err, message) {
-    console.log(err || message);
+    to: emailTo,
+    subject: 'test测试邮件'
   });
+  ctx.body = {
+    status: 0,
+    msg: '面试邀请邮件发送成功!'
+  }
 }
 
 

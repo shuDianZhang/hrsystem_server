@@ -26,7 +26,7 @@ const resumeSchema = new Schema({
         type: String,
         require: true
     },
-    eamil: {
+    email: {
         type: String,
         require: true
     },

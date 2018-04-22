@@ -21,11 +21,17 @@ route.get('/search/getTopMenuInfo', userModule.identifyLogin, searchModule.topMe
 route.get('/search/employeeInfo', userModule.identifyLogin, searchModule.employeeInfo);
 route.get('/search/leader', userModule.identifyLogin, searchModule.getLeaderInfo);
 route.get('/search/getResume', userModule.identifyLogin, searchModule.getResume);
+route.get('/search/detailResume', userModule.identifyLogin, searchModule.getDetailResume);
+route.get('/search/getEmployeePayment', userModule.identifyLogin, searchModule.getEmployeePayment);
+route.get('/search/accountList', userModule.identifyLogin, searchModule.getAccountList);
+route.get('/search/employeeInfoList', userModule.identifyLogin, searchModule.getEmployeeInfoList);
 
 route.get('/upload/gettoken', credentialsModule.getToken);
 route.post('/upload/upresume', credentialsModule.upresume);
+route.post('/upload/setSalary', userModule.identifyLogin, credentialsModule.setSalary);
+route.post('/upload/resetAccount', userModule.identifyLogin, credentialsModule.resetAccount);
 
 route.post('/upload/headimage', credentialsModule.uploadHeadImage);
-
 route.post('/send/email', emailModule.sendEmail);
+
 module.exports = route;

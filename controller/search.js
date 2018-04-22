@@ -6,6 +6,7 @@ const jobCollection = require('../model/position').position;
 const employeeInfoCollection = require('../model/employeeInfo').employeeInfo;
 const userBaseInfoCollection = require('../model/userBaseInfo').userBaseInfo;
 const resumeCollection = require('../model/resume').resume;
+const salaryCollection = require('../model/salary').salary;
 
 // 查找职工考勤记录
 let clockinRecord = async (ctx) => {
@@ -108,5 +109,70 @@ let getResume = async (ctx) => {
     }
 }
 
+// 获取简历详细情况
+let getDetailResume = async (ctx) => {
+    let name = ctx.query.name;
+    resumeDetailInfo = await resumeCollection.findOne({ name });
+    ctx.body = {
+        status: 0,
+        resumeDetail: resumeDetailInfo
+    }
+}
 
-module.exports = { clockinRecord, ifClockIn, employeeInfo, topMenuInfo, getLeaderInfo, getResume }
+// 获取员工工资列表
+let getEmployeePayment = async (ctx) => {
+    let name = ctx.query.name;
+    if (name) {
+        console.log('to do');
+        return;
+    }
+    let employeePaymentInfo = await salaryCollection.find();
+    ctx.body = {
+        status: 0,
+        employeePaymentList: employeePaymentInfo
+    }
+}
+
+// 查询员工账号信息
+let getAccountList = async (ctx) => {
+    let username = ctx.query.username;
+    if (username) {
+        let userAccount = await userBaseInfoCollection.findOne({ _id: username });
+        if (userAccount) {
+            let userId = userAccount._id;
+            ctx.body = {
+                status: 0, content: [{ name: userAccount.name, _id: userId }]
+            }
+            return;
+        }
+        ctx.body = { status: 2, msg: '此账号不存在!' }
+        return;
+    }
+    let userList = await userBaseInfoCollection.find();
+    ctx.body = {
+        status: 0,
+        content: userList
+    }
+}
+
+// 获取职员信息
+let getEmployeeInfoList = async (ctx) => {
+    let name = ctx.query.name;
+    if (name) {
+        return;
+    }
+    let employeeInfoList = await employeeInfoCollection.find();
+    let content = [];
+    employeeInfoList.forEach(function (item, index) {
+        let employeeInfoBase = {};
+        employeeInfoBase.name = item.name;
+        employeeInfoBase.sex = item.sex;
+        employeeInfoBase.nation = item.nation;
+        employeeInfoBase.idnumber = item.idnumber;
+        employeeInfoBase.phone = item.phone;
+        content.push(employeeInfoBase);
+    });
+    ctx.body = { status: 0, content: content }
+}
+
+module.exports = { clockinRecord, ifClockIn, employeeInfo, topMenuInfo, getLeaderInfo, getResume, getDetailResume, getEmployeePayment, getAccountList, getEmployeeInfoList }

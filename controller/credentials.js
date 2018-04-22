@@ -6,6 +6,7 @@ const accessKey = 'LBXMAi37VySKTS6OIu-7_IkSWrha6e9YqMn82ap-';
 const secretKey = 'As0DnXjbRJPqSn9IPk7e_N3w2zqrs76ItRKQXBN5';
 const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
 
+const salaryCollection = require('../model/salary').salary;
 
 // 七牛云上传凭证
 let getToken = async (ctx, option) => {
@@ -94,4 +95,14 @@ let upresume = async (ctx) => {
         msg: '简历投递成功'
     }
 }
-module.exports = { getToken, uploadHeadImage, upresume }
+
+// 更新员工基本工资
+let setSalary = async (ctx) => {
+    let name = ctx.request.body.name;
+    let salaryInfo = await salaryCollection.update({ name: name });
+}
+
+// 重置账号密码
+let resetAccount = async (ctx) => {
+}
+module.exports = { getToken, uploadHeadImage, upresume, setSalary, resetAccount }
