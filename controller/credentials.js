@@ -2,6 +2,8 @@ const moment = require('moment');
 const resumeCollection = require('../model/resume').resume;
 const userBaseInfoCollection = require('../model/userBaseInfo').userBaseInfo;
 const workRecordCollection = require('../model/workRecord').workRecord;
+const holidayInfoCollection = require('../model/holidayInfo').holidayInfo;
+
 const qiniu = require('qiniu');
 
 const accessKey = 'LBXMAi37VySKTS6OIu-7_IkSWrha6e9YqMn82ap-';
@@ -128,4 +130,22 @@ let setWordRecord = async (ctx) => {
         msg: '成功添加奖惩记录'
     }
 }
-module.exports = { getToken, uploadHeadImage, upresume, setSalary, resetAccount, setWordRecord }
+
+let getHoliday = async (ctx) => {
+    let holiday = ctx.request.body;
+    let phone = ctx.session.user;
+    holiday['phone'] = phone;
+    let newHolidayInfo = new holidayInfoCollection(holiday);
+    newHolidayInfo.save().then((result) => {
+        console.log('已成功更新!');
+    }).catch((err) => {
+        console.log(err);
+    });
+    ctx.body = {
+        status: 0,
+        msg: '请假成功，等待部门领导的审批!'
+    }
+}
+
+
+module.exports = { getToken, uploadHeadImage, upresume, setSalary, resetAccount, setWordRecord, getHoliday }

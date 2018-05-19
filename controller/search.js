@@ -8,6 +8,7 @@ const userBaseInfoCollection = require('../model/userBaseInfo').userBaseInfo;
 const resumeCollection = require('../model/resume').resume;
 const salaryCollection = require('../model/salary').salary;
 const workRecordCollection = require('../model/workRecord').workRecord;
+const holidayInfoCollection = require('../model/holidayInfo').holidayInfo;
 
 // 查找职工考勤记录
 let clockinRecord = async (ctx) => {
@@ -76,9 +77,10 @@ let employeeInfo = async (ctx) => {
 let topMenuInfo = async (ctx) => {
     let _id = ctx.session.user;
     let userBaseInfo = await userBaseInfoCollection.findOne({ _id });
+    let userMessage = await holidayInfoCollection.find({ approvePeople: _id, ifApprove: false });
     ctx.body = {
         status: 0,
-        content: { _id: userBaseInfo._id, name: userBaseInfo.name, hasHeadImg: userBaseInfo.hasHeadImg }
+        content: { _id: userBaseInfo._id, name: userBaseInfo.name, hasHeadImg: userBaseInfo.hasHeadImg, message: userMessage.length }
     }
 }
 
@@ -131,13 +133,19 @@ let getDetailResume = async (ctx) => {
 let getEmployeePayment = async (ctx) => {
     let name = ctx.query.name;
     if (name) {
-        console.log('to do');
+        let employeePaymentInfo = await salaryCollection.find({
+            name: name
+        });
+        ctx.body = {
+            status: 0,
+            employeePaymentList: employeePaymentInfo
+        }
         return;
-    }
-    let employeePaymentInfo = await salaryCollection.find();
-    ctx.body = {
-        status: 0,
-        employeePaymentList: employeePaymentInfo
+    } else {
+        ctx.body = {
+            status: 1,
+            msg: '请输入姓名'
+        }
     }
 }
 
@@ -203,7 +211,31 @@ let getWorkRecord = async (ctx) => {
     }
 }
 
+// 获取请假列表
+let getHolidayList = async (ctx) => {
+    let username = ctx.session.user;
+    if (username) {
+        let wordRecord = await holidayInfoCollection.find({ phone: username }).sort({ '_id': -1 });
+        ctx.body = {
+            status: 0,
+            content: wordRecord
+        }
+    }
+}
+
+// 获取待审批列表
+let approveHoliday = async (ctx) => {
+    let username = ctx.session.user;
+    if (username) {
+        let wordRecord = await holidayInfoCollection.find({ approvePeople: username }).sort({ '_id': -1 });
+        ctx.body = {
+            status: 0,
+            content: wordRecord
+        }
+    }
+}
+
 module.exports = {
     clockinRecord, ifClockIn, employeeInfo, topMenuInfo, getLeaderInfo, getResume, getDetailResume,
-    getEmployeePayment, getAccountList, getEmployeeInfoList, getName, getWorkRecord
+    getEmployeePayment, getAccountList, getEmployeeInfoList, getName, getWorkRecord, getHolidayList, approveHoliday
 }

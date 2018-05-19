@@ -15,7 +15,7 @@ const salarySchema = new Schema({
         require: true
     },
     serviceSalary: {
-        type: Number,
+        type: Object,
         require: true
     },
     rewardSalary: {
