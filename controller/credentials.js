@@ -1,5 +1,7 @@
+const moment = require('moment');
 const resumeCollection = require('../model/resume').resume;
 const userBaseInfoCollection = require('../model/userBaseInfo').userBaseInfo;
+const workRecordCollection = require('../model/workRecord').workRecord;
 const qiniu = require('qiniu');
 
 const accessKey = 'LBXMAi37VySKTS6OIu-7_IkSWrha6e9YqMn82ap-';
@@ -105,4 +107,25 @@ let setSalary = async (ctx) => {
 // 重置账号密码
 let resetAccount = async (ctx) => {
 }
-module.exports = { getToken, uploadHeadImage, upresume, setSalary, resetAccount }
+
+// 添加惩罚奖赏
+let setWordRecord = async (ctx) => {
+    let workRecord = ctx.request.body;
+    let wordRecord2 = workRecord;
+    wordRecord2['username'] = workRecord["_id"];
+    wordRecord2['date'] = moment().format("YYYY-MM-DD");
+    delete wordRecord2["_id"];
+    let workRecordInfo = new workRecordCollection(wordRecord2);
+    workRecordInfo.save()
+        .then((result) => {
+            console.log('已成功更新!');
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    ctx.body = {
+        status: 0,
+        msg: '成功添加奖惩记录'
+    }
+}
+module.exports = { getToken, uploadHeadImage, upresume, setSalary, resetAccount, setWordRecord }

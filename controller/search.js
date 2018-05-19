@@ -7,21 +7,29 @@ const employeeInfoCollection = require('../model/employeeInfo').employeeInfo;
 const userBaseInfoCollection = require('../model/userBaseInfo').userBaseInfo;
 const resumeCollection = require('../model/resume').resume;
 const salaryCollection = require('../model/salary').salary;
+const workRecordCollection = require('../model/workRecord').workRecord;
 
 // 查找职工考勤记录
 let clockinRecord = async (ctx) => {
     let starttime = ctx.query.starttime,
         endtime = ctx.query.endtime,
-        username = ctx.session.user;
+        username = ctx.session.user,
+        account = { chidao: 0, zaotui: 0, kuanggong: 0 };
     let clockRecord = await clockInCollection.find(
         {
             username,
             date: { $gte: new Date(starttime), $lte: new Date(endtime) }
         }
     );
+    for (let item of clockRecord) {
+        account['chidao'] += item.chidao;
+        account['zaotui'] += item.zaotui;
+        account['kuanggong'] += item.kuanggong;
+    }
     ctx.body = {
         status: 0,
         content: clockRecord,
+        account: account,
         msg: '查询成功'
     }
 }
@@ -175,4 +183,27 @@ let getEmployeeInfoList = async (ctx) => {
     ctx.body = { status: 0, content: content }
 }
 
-module.exports = { clockinRecord, ifClockIn, employeeInfo, topMenuInfo, getLeaderInfo, getResume, getDetailResume, getEmployeePayment, getAccountList, getEmployeeInfoList }
+// 获取姓名
+let getName = async (ctx) => {
+    let name = ctx.query.name;
+    let userBaseInfo = await userBaseInfoCollection.find({ name: name });
+    ctx.body = { status: 0, content: userBaseInfo };
+}
+
+
+// 获取奖惩信息
+let getWorkRecord = async (ctx) => {
+    let id = ctx.query.id || ctx.session.user;
+    if (id) {
+        let wordRecord = await workRecordCollection.find({ username: id });
+        ctx.body = {
+            status: 0,
+            content: wordRecord
+        }
+    }
+}
+
+module.exports = {
+    clockinRecord, ifClockIn, employeeInfo, topMenuInfo, getLeaderInfo, getResume, getDetailResume,
+    getEmployeePayment, getAccountList, getEmployeeInfoList, getName, getWorkRecord
+}

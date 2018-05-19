@@ -25,13 +25,17 @@ route.get('/search/detailResume', userModule.identifyLogin, searchModule.getDeta
 route.get('/search/getEmployeePayment', userModule.identifyLogin, searchModule.getEmployeePayment);
 route.get('/search/accountList', userModule.identifyLogin, searchModule.getAccountList);
 route.get('/search/employeeInfoList', userModule.identifyLogin, searchModule.getEmployeeInfoList);
+route.get('/search/name', userModule.identifyLogin, searchModule.getName);
+route.get('/search/getWorkRecord', userModule.identifyLogin, searchModule.getWorkRecord);
 
 route.get('/upload/gettoken', credentialsModule.getToken);
 route.post('/upload/upresume', credentialsModule.upresume);
 route.post('/upload/setSalary', userModule.identifyLogin, credentialsModule.setSalary);
 route.post('/upload/resetAccount', userModule.identifyLogin, credentialsModule.resetAccount);
+route.post('/upload/wordRecord', userModule.identifyLogin, credentialsModule.setWordRecord);
 
 route.post('/upload/headimage', credentialsModule.uploadHeadImage);
 route.post('/send/email', emailModule.sendEmail);
+
 
 module.exports = route;
