@@ -3,6 +3,7 @@ const resumeCollection = require('../model/resume').resume;
 const userBaseInfoCollection = require('../model/userBaseInfo').userBaseInfo;
 const workRecordCollection = require('../model/workRecord').workRecord;
 const holidayInfoCollection = require('../model/holidayInfo').holidayInfo;
+const interviewCollecton = require('../model/interview').interview;
 
 const qiniu = require('qiniu');
 
@@ -147,5 +148,21 @@ let getHoliday = async (ctx) => {
     }
 }
 
+let holidayApproval = async (ctx) => {
+    let _id = ctx.request.body._id;
+    console.log(_id);
+    let holiday = await holidayInfoCollection.update({ _id }, { ifApprove: true }, function (err, data) {
+        if (err) {
+            ctx.body = {
+                status: 1,
+                msg: '数据库错误'
+            }
+        }
+    });
+    ctx.body = {
+        status: 0,
+        msg: '审批成功'
+    }
+}
 
-module.exports = { getToken, uploadHeadImage, upresume, setSalary, resetAccount, setWordRecord, getHoliday }
+module.exports = { getToken, uploadHeadImage, upresume, setSalary, resetAccount, setWordRecord, getHoliday, holidayApproval }

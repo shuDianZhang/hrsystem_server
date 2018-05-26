@@ -27,11 +27,10 @@ let employeePayment = async (ctx) => {
                 };
             }
         });
-    } else {
-        ctx.body = {
-            status: 1,
-            msg: '薪酬设置失败'
-        };
+    }
+    ctx.body = {
+        status: 0,
+        msg: '薪酬设置成功!'
     }
 }
 

@@ -30,6 +30,8 @@ route.get('/search/name', userModule.identifyLogin, searchModule.getName);
 route.get('/search/getWorkRecord', userModule.identifyLogin, searchModule.getWorkRecord);
 route.get('/search/holidaylist', userModule.identifyLogin, searchModule.getHolidayList);
 route.get('/search/approveHoliday', userModule.identifyLogin, searchModule.approveHoliday);
+route.get('/search/salary', userModule.identifyLogin, searchModule.getSalary);
+
 
 
 route.get('/upload/gettoken', credentialsModule.getToken);
@@ -42,7 +44,11 @@ route.post('/upload/holiady', userModule.identifyLogin, credentialsModule.getHol
 route.post('/update/employeePayment', userModule.identifyLogin, update.employeePayment);
 
 route.post('/upload/headimage', credentialsModule.uploadHeadImage);
-route.post('/send/email', emailModule.sendEmail);
+route.post('/upload/evaluate', emailModule.evaluate);
+route.post('/holiday/approval', userModule.identifyLogin, credentialsModule.holidayApproval);
+
+route.post('/send/email-interview', emailModule.sendEmail);
+route.post('/send/email-fail', emailModule.sendEmailFail);
 
 
 module.exports = route;

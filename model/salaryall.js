@@ -1,17 +1,17 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const salarySchema = new Schema({
+const salaryAllSchema = new Schema({
     _id: {
         type: String,
         require: true
     },
-    date: {
+    username: {
         type: String,
         require: true
     },
-    name: {
-        type: String,
+    date: {
+        type: Date,
         require: true
     },
     baseSalary: {
@@ -19,10 +19,6 @@ const salarySchema = new Schema({
         require: true
     },
     serviceSalary: {
-        type: Object,
-        require: true
-    },
-    rewardSalary: {
         type: Number,
         require: true
     },
@@ -30,10 +26,18 @@ const salarySchema = new Schema({
         type: Number,
         require: true
     },
+    rewardSalary: {
+        type: Number,
+        require: true
+    },
     punishMoney: {
         type: Number,
         require: true
+    },
+    shouldPay: {
+        type: Number,
+        require: true
     }
-}, { collection: 'salary' });    // 自定义集合名，避免表名出现复数
+}, { collection: 'salaryall' });    // 自定义集合名，避免表名出现复数
 
-exports.salary = mongoose.model('salary', salarySchema);
+exports.salaryAll = mongoose.model('salaryall', salaryAllSchema);

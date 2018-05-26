@@ -9,6 +9,7 @@ const resumeCollection = require('../model/resume').resume;
 const salaryCollection = require('../model/salary').salary;
 const workRecordCollection = require('../model/workRecord').workRecord;
 const holidayInfoCollection = require('../model/holidayInfo').holidayInfo;
+const salaryAllInfoCollection = require('../model/salaryall').salaryAll;
 
 // 查找职工考勤记录
 let clockinRecord = async (ctx) => {
@@ -175,6 +176,9 @@ let getAccountList = async (ctx) => {
 let getEmployeeInfoList = async (ctx) => {
     let name = ctx.query.name;
     if (name) {
+        console.log(name);
+        let employeeInfoList = await employeeInfoCollection.findOne({ name });
+        ctx.body = { status: 0, content: employeeInfoList }
         return;
     }
     let employeeInfoList = await employeeInfoCollection.find();
@@ -202,8 +206,10 @@ let getName = async (ctx) => {
 // 获取奖惩信息
 let getWorkRecord = async (ctx) => {
     let id = ctx.query.id || ctx.session.user;
+    console.log(id);
     if (id) {
         let wordRecord = await workRecordCollection.find({ username: id });
+        console.log(wordRecord);
         ctx.body = {
             status: 0,
             content: wordRecord
@@ -227,7 +233,7 @@ let getHolidayList = async (ctx) => {
 let approveHoliday = async (ctx) => {
     let username = ctx.session.user;
     if (username) {
-        let wordRecord = await holidayInfoCollection.find({ approvePeople: username }).sort({ '_id': -1 });
+        let wordRecord = await holidayInfoCollection.find({ approvePeople: username, ifApprove: false }).sort({ '_id': -1 });
         ctx.body = {
             status: 0,
             content: wordRecord
@@ -235,7 +241,22 @@ let approveHoliday = async (ctx) => {
     }
 }
 
+// 查询考勤信息
+const getSalary = async (ctx) => {
+    let starttime = ctx.query.starttime,
+        endtime = ctx.query.endtime,
+        username = ctx.session.user;
+    let salaryAll = await salaryAllInfoCollection.find(
+        { username }
+    );
+    ctx.body = {
+        status: 0,
+        content: salaryAll,
+        msg: '查询成功'
+    }
+}
+
 module.exports = {
     clockinRecord, ifClockIn, employeeInfo, topMenuInfo, getLeaderInfo, getResume, getDetailResume,
-    getEmployeePayment, getAccountList, getEmployeeInfoList, getName, getWorkRecord, getHolidayList, approveHoliday
+    getEmployeePayment, getAccountList, getEmployeeInfoList, getName, getWorkRecord, getHolidayList, approveHoliday, getSalary
 }

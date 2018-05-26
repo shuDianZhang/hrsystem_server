@@ -63,19 +63,23 @@ let afterwork = async (ctx) => {
     let sepTime1 = moment(afterWorkTime).subtract(30, 'minutes');
 
     if (clockInfo.state === "旷工") {
+        //    打卡时间 17:00 ~ 17: 30
         if (clockInTime.isBefore(afterWorkTime) && sepTime1.isBefore(clockInTime)) {
             clockInfo.zaotui += 1;
         }
+        //    打卡时间 早于17: 00
         if (clockInTime.isBefore(sepTime1)) {
             clockInfo.kuanggong += 1;
         }
     }
 
+    // 打卡时间   17:00 ~ 17: 30
     if (clockInfo.state != "旷工") {
         if (clockInTime.isBefore(afterWorkTime) && sepTime1.isBefore(clockInTime)) {
             clockInfo.state = "早退";
             clockInfo.zaotui += 1;
         }
+        // 打卡时间  早于 17: 00
         if (clockInTime.isBefore(sepTime1)) {
             clockInfo.state = "旷工";
             clockInfo.kuanggong += 1;
